@@ -12,13 +12,11 @@ export default defineConfig({
         popup: path.resolve(process.cwd(), "popup.html"),
         background: path.resolve(process.cwd(), "src/background/serviceWorker.ts"),
         content: path.resolve(process.cwd(), "src/content/index.ts"),
-        offscreen: path.resolve(process.cwd(), "src/offscreen/offscreen.ts"),
       },
       output: {
         entryFileNames: (chunk) => {
           if (chunk.name === "background") return "background.js";
           if (chunk.name === "content") return "content.js";
-          if (chunk.name === "offscreen") return "offscreen.js";
           return "assets/[name]-[hash].js";
         },
         chunkFileNames: "assets/[name]-[hash].js",

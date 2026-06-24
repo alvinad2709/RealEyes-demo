@@ -1,15 +1,15 @@
 """
 DeepGuard Backend - FastAPI AI Server
-Serves deepfake detection for images, video frames, and audio.
+Serves deepfake detection for images.
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import image, video, audio
+from routers import image
 
 app = FastAPI(
     title="DeepGuard API",
-    description="AI-powered deepfake detection API for images, video, and audio.",
+    description="AI-powered deepfake detection API for images.",
     version="1.0.0",
 )
 
@@ -24,8 +24,6 @@ app.add_middleware(
 
 # Mount routers
 app.include_router(image.router, prefix="/analyze", tags=["Image"])
-app.include_router(video.router, prefix="/analyze", tags=["Video"])
-app.include_router(audio.router, prefix="/analyze", tags=["Audio"])
 
 
 @app.get("/")

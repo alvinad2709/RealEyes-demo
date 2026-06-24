@@ -2,7 +2,7 @@
 
 export interface AnalysisResult {
   success: boolean;
-  type: "image" | "video_frame" | "video_frames" | "audio";
+  type: "image";
   label: "FAKE" | "REAL";
   confidence: number; // 0–100
   scores: {
@@ -17,12 +17,9 @@ export interface AnalysisResult {
 }
 
 export type MessageType =
-  | "SCANNER_ON"
-  | "SCANNER_OFF"
   | "START_REGION_SELECT"
-  | "START_AUDIO_RECORD"
-  | "ANALYZE_IMAGE_URL"
-  | "ANALYZE_AUDIO"
+  | "CAPTURE_REGION"
+  | "ANALYZE_IMAGE_BASE64"
   | "ANALYSIS_RESULT"
   | "ANALYSIS_ERROR";
 

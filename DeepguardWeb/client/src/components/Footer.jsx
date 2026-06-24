@@ -36,25 +36,23 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links Col 1 */}
-          <div className="space-y-4">
-            <h4 className="font-mono text-xs text-white uppercase tracking-wider font-semibold">Core Engines</h4>
-            <ul className="space-y-2 text-sm text-textMuted">
-              <li><Link to="/detect-image" className="hover:text-deepRed hover:underline underline-offset-4 transition-colors">Vision Net (Images)</Link></li>
-              <li><Link to="/detect-video" className="hover:text-deepRed hover:underline underline-offset-4 transition-colors">Temporal Net (Video)</Link></li>
-              <li><Link to="/fake-news" className="hover:text-deepRed hover:underline underline-offset-4 transition-colors">Semantic Net (News)</Link></li>
-              <li><Link to="/detect-audio" className="hover:text-deepRed hover:underline underline-offset-4 transition-colors">Acoustic Net (Voice)</Link></li>
-            </ul>
-          </div>
-
-          {/* Links Col 2 */}
+          {/* Platform Col */}
           <div className="space-y-4">
             <h4 className="font-mono text-xs text-white uppercase tracking-wider font-semibold">Platform</h4>
             <ul className="space-y-2 text-sm text-textMuted">
               <li><span className="hover:text-white cursor-pointer transition-colors">About Us</span></li>
-              <li><Link to="/awareness" className="hover:text-white transition-colors">Education Hub</Link></li>
-              <li><Link to="/ai-chat" className="hover:text-white transition-colors">Inference Chat API</Link></li>
+              <li><a href="#install" className="hover:text-deepRed transition-colors">Install Extension</a></li>
               <li><span className="hover:text-white cursor-pointer transition-colors">Documentation</span></li>
+            </ul>
+          </div>
+
+          {/* Contact Col */}
+          <div className="space-y-4">
+            <h4 className="font-mono text-xs text-white uppercase tracking-wider font-semibold">Contact</h4>
+            <ul className="space-y-2 text-sm text-textMuted">
+              <li><span className="hover:text-white cursor-pointer transition-colors">Privacy Policy</span></li>
+              <li><span className="hover:text-white cursor-pointer transition-colors">Terms of Service</span></li>
+              <li><span className="flex items-center gap-1 hover:text-white cursor-pointer transition-colors"><Mail className="w-3 h-3" /> Contact</span></li>
             </ul>
           </div>
 
@@ -62,11 +60,6 @@ export default function Footer() {
 
         <div className="w-full flex flex-col md:flex-row items-center justify-between border-t border-deepBorder/50 mt-12 pt-8 text-xs text-textMuted font-mono">
           <p>&copy; {new Date().getFullYear()} Deepguard Foundation. All system protocols operational.</p>
-          <div className="flex gap-4 mt-4 md:mt-0">
-            <span className="hover:text-white cursor-pointer">Privacy Policy</span>
-            <span className="hover:text-white cursor-pointer">Terms of Service</span>
-            <span className="flex items-center gap-1 hover:text-white cursor-pointer"><Mail className="w-3 h-3" /> Contact</span>
-          </div>
         </div>
       </div>
     </footer>

@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import { Shield, FileText, Brain, MessageSquare, BookOpen, Lock, Image as ImageIcon, Zap, Target, Cpu, Activity } from 'lucide-react';
+import { Shield, FileText, Brain, MessageSquare, BookOpen, Lock, Image as ImageIcon, Zap, Target, Download, Puzzle } from 'lucide-react';
 
 export default function Landing() {
   const features = [
@@ -76,18 +75,18 @@ export default function Landing() {
 
           <p className="text-sm md:text-base text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed font-mono">
             Powered by Vision Transformers &middot; LLaMA-3 &middot; Grad-CAM &middot; Groq<br/>
-            Real-time KYC identity, image & video verification with explainable architectures.
+            Real-time KYC identity, image &amp; video verification with explainable architectures.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/detect-image" className="w-full sm:w-auto px-8 py-4 bg-deepRed/10 border border-deepRed text-deepRed rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-deepRed hover:text-white hover:glow-red transition-all duration-300">
+            <a href="#install" className="w-full sm:w-auto px-8 py-4 bg-deepRed/10 border border-deepRed text-deepRed rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-deepRed hover:text-white hover:glow-red transition-all duration-300">
+              <Download className="w-5 h-5" />
+              INSTALL EXTENSION &rarr;
+            </a>
+            <a href="#about" className="w-full sm:w-auto px-8 py-4 bg-deepCard border border-deepBorder text-textMuted rounded-xl font-bold flex items-center justify-center gap-2 hover:text-white transition-all duration-300">
               <Shield className="w-5 h-5" />
-              DETECT DEEPFAKE &rarr;
-            </Link>
-            <Link to="/fake-news" className="w-full sm:w-auto px-8 py-4 bg-deepCard border border-deepBorder text-textMuted rounded-xl font-bold flex items-center justify-center gap-2 hover:text-white transition-all duration-300">
-              <FileText className="w-5 h-5" />
-              CHECK FAKE NEWS
-            </Link>
+              LEARN MORE
+            </a>
           </div>
         </div>
       </div>
@@ -117,6 +116,58 @@ export default function Landing() {
               <p className="text-sm text-textMuted leading-relaxed">{feat.desc}</p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Install Extension Section */}
+      <div className="w-full py-24 px-6 border-b border-deepBorder/50" id="install">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 text-deepGreen font-mono text-sm uppercase tracking-wider font-bold mb-6">
+            <Puzzle className="w-4 h-4" /> Chrome Extension
+          </div>
+          <h2 className="text-4xl md:text-5xl font-display font-bold leading-tight mb-6">
+            Get <span className="text-deepRed glow-text-red">Deepguard</span> in Your Browser
+          </h2>
+          <p className="text-textMuted max-w-2xl mx-auto mb-10 leading-relaxed">
+            Install the Deepguard Chrome Extension to detect deepfake images, video, and audio directly on any webpage. 
+            Analyze content in real-time with a single click — no uploads, no hassle.
+          </p>
+
+          <div className="glass-panel p-8 max-w-lg mx-auto border border-deepBorder space-y-6">
+            <div className="flex items-center gap-4 text-left">
+              <div className="p-3 rounded-lg bg-deepRed/10 border border-deepRed/30 flex-shrink-0">
+                <Shield className="w-8 h-8 text-deepRed" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">Deepguard AI Extension</h3>
+                <p className="text-sm text-textMuted">AI-powered deepfake detection for Chrome</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-left text-sm text-textMuted">
+              <div className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-deepGreen mt-1.5 flex-shrink-0" />
+                <span>Scan every image on a page with one toggle</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-deepGreen mt-1.5 flex-shrink-0" />
+                <span>Select any region — images, videos, ads — for real-time analysis</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-deepGreen mt-1.5 flex-shrink-0" />
+                <span>Record tab audio to detect AI-generated voices</span>
+              </div>
+            </div>
+
+            <a
+              href="#"
+              className="w-full px-8 py-4 bg-deepRed/10 border border-deepRed text-deepRed rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-deepRed hover:text-white hover:glow-red transition-all duration-300"
+            >
+              <Download className="w-5 h-5" />
+              DOWNLOAD FOR CHROME
+            </a>
+            <p className="text-xs text-textMuted font-mono">Manifest V3 · Works on Chrome 116+</p>
+          </div>
         </div>
       </div>
 
