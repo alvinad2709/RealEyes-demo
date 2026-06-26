@@ -6,29 +6,25 @@
 
 @layer base {
   body {
-    @apply bg-deepBase text-white font-sans antialiased;
-    background-image: 
-      linear-gradient(rgba(20, 20, 20, 0.8) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(20, 20, 20, 0.8) 1px, transparent 1px);
-    background-size: 50px 50px;
-    background-color: #050505;
+    @apply text-white font-sans antialiased;
+    background-color: #030712;
   }
 }
 
 @layer utilities {
-  .glow-red {
-    box-shadow: 0 0 15px rgba(255, 42, 42, 0.5);
+  .glow-accent {
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
   }
-  .glow-green {
-    box-shadow: 0 0 15px rgba(0, 229, 89, 0.5);
+  .glow-success {
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
   }
-  .glow-text-red {
-    text-shadow: 0 0 10px rgba(255, 42, 42, 0.7);
+  .glow-text-accent {
+    text-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
   }
-  .glow-text-green {
-    text-shadow: 0 0 10px rgba(0, 229, 89, 0.7);
+  .glow-text-success {
+    text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
   }
   .glass-panel {
-    @apply bg-deepCard/80 backdrop-blur-md border border-deepBorder rounded-2xl;
+    @apply bg-aiCard/60 backdrop-blur-xl border border-white/10 rounded-2xl;
   }
 }

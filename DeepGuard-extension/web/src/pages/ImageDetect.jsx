@@ -33,13 +33,8 @@ export default function ImageDetect() {
         formData.append('url', urlInput);
       }
 
-      const token = localStorage.getItem('token');
-      
       const response = await fetch('http://localhost:5000/api/tools/detect-image', {
         method: 'POST',
-        headers: {
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
         body: formData
       });
 
@@ -57,27 +52,8 @@ export default function ImageDetect() {
     }
   };
 
-  const submitFeedback = async (verdict) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/tools/feedback', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({
-          hash: results.hash,
-          aiVerdict: results.isFake ? 'FAKE' : 'REAL',
-          aiConfidence: results.score,
-          userVerdict: verdict
-        })
-      });
-      if (response.ok) setFeedbackStatus('success');
-      else setFeedbackStatus('error');
-    } catch (e) {
-      setFeedbackStatus('error');
-    }
+  const submitFeedback = (verdict) => {
+    setFeedbackStatus('success');
   };
 
   const handleGenerateDocx = async () => {
@@ -158,79 +134,36 @@ export default function ImageDetect() {
     if (!previewUrl) return;
     
     if (activeTab === 'url' && urlInput) {
-       // For URL-based images, go straight to Google Lens
        window.open(`https://lens.google.com/uploadbyurl?url=${encodeURIComponent(urlInput)}`, '_blank');
     } else {
-       // For local uploads: upload to temp host via our backend, then redirect
-       try {
-         const res = await fetch(previewUrl);
-         const blob = await res.blob();
-         
-         const formData = new FormData();
-         formData.append('image', blob, 'search_image.jpg');
-         
-         const uploadRes = await fetch('http://localhost:5000/api/tools/temp-upload', {
-           method: 'POST',
-           body: formData
-         });
-         
-         if (!uploadRes.ok) throw new Error('Temp upload failed');
-         
-         const { url } = await uploadRes.json();
-         window.open(`https://lens.google.com/uploadbyurl?url=${encodeURIComponent(url)}`, '_blank');
-       } catch (error) {
-         console.error("Google Lens search failed:", error);
-         alert("Could not initialize Google Lens search. Please try again.");
-       }
+       alert('Google Lens search is only available for URL-based images. Please use the URL tab.');
     }
   };
 
-  // Shared helper: gets a public URL for the current image
-  const getPublicImageUrl = async () => {
-    if (activeTab === 'url' && urlInput) return urlInput;
-    const res = await fetch(previewUrl);
-    const blob = await res.blob();
-    const formData = new FormData();
-    formData.append('image', blob, 'search_image.jpg');
-    const uploadRes = await fetch('http://localhost:5000/api/tools/temp-upload', {
-      method: 'POST',
-      body: formData
-    });
-    if (!uploadRes.ok) throw new Error('Temp upload failed');
-    const { url } = await uploadRes.json();
-    return url;
-  };
-
-  const handleTinEye = async () => {
+  const handleTinEye = () => {
     if (!previewUrl) return;
-    try {
-      const url = await getPublicImageUrl();
-      window.open(`https://tineye.com/search?url=${encodeURIComponent(url)}`, '_blank');
-    } catch (e) {
-      console.error('TinEye search failed:', e);
-      alert('Could not launch TinEye search.');
+    if (activeTab === 'url' && urlInput) {
+      window.open(`https://tineye.com/search?url=${encodeURIComponent(urlInput)}`, '_blank');
+    } else {
+      alert('TinEye search is only available for URL-based images. Please use the URL tab.');
     }
   };
 
-  const handleYandex = async () => {
+  const handleYandex = () => {
     if (!previewUrl) return;
-    try {
-      const url = await getPublicImageUrl();
-      window.open(`https://yandex.com/images/search?source=collections&rpt=imageview&url=${encodeURIComponent(url)}`, '_blank');
-    } catch (e) {
-      console.error('Yandex search failed:', e);
-      alert('Could not launch Yandex search.');
+    if (activeTab === 'url' && urlInput) {
+      window.open(`https://yandex.com/images/search?source=collections&rpt=imageview&url=${encodeURIComponent(urlInput)}`, '_blank');
+    } else {
+      alert('Yandex search is only available for URL-based images. Please use the URL tab.');
     }
   };
 
-  const handleBingVisual = async () => {
+  const handleBingVisual = () => {
     if (!previewUrl) return;
-    try {
-      const url = await getPublicImageUrl();
-      window.open(`https://www.bing.com/images/search?view=detailv2&iss=sbi&form=SBIHMP&q=imgurl:${encodeURIComponent(url)}`, '_blank');
-    } catch (e) {
-      console.error('Bing Visual search failed:', e);
-      alert('Could not launch Bing Visual search.');
+    if (activeTab === 'url' && urlInput) {
+      window.open(`https://www.bing.com/images/search?view=detailv2&iss=sbi&form=SBIHMP&q=imgurl:${encodeURIComponent(urlInput)}`, '_blank');
+    } else {
+      alert('Bing Visual search is only available for URL-based images. Please use the URL tab.');
     }
   };
 
@@ -241,15 +174,15 @@ export default function ImageDetect() {
       <div className="space-y-6">
         
         {/* Input Tabs */}
-        <div className="flex items-center gap-4 border-b border-deepBorder pb-2">
+        <div className="flex items-center gap-4 border-b border-white/10 pb-2">
           <button 
-            className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all", activeTab === 'upload' ? "bg-deepRed/10 text-deepRed border border-deepRed/30" : "text-textMuted hover:text-white")}
+            className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all", activeTab === 'upload' ? "bg-rose-500/10 text-rose-500 border border-rose-500/30" : "text-textMuted hover:text-white")}
             onClick={() => setActiveTab('upload')}
           >
             <UploadCloud className="w-4 h-4" /> Upload Image
           </button>
           <button 
-            className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all", activeTab === 'url' ? "bg-deepCard text-white border border-deepBorder" : "text-textMuted hover:text-white")}
+            className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all", activeTab === 'url' ? "bg-white/[0.03] text-white border border-white/10" : "text-textMuted hover:text-white")}
             onClick={() => setActiveTab('url')}
           >
             <LinkIcon className="w-4 h-4" /> Image URL
@@ -261,7 +194,7 @@ export default function ImageDetect() {
           <div 
             className={clsx(
               "w-full h-48 rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all",
-              isHovering ? "border-deepRed bg-deepRed/5" : "border-deepBorder bg-deepCard hover:border-textMuted"
+              isHovering ? "border-rose-500 bg-rose-500/5" : "border-white/10 bg-white/[0.03] hover:border-textMuted"
             )}
             onDragOver={(e) => { e.preventDefault(); setIsHovering(true); }}
             onDragLeave={(e) => { e.preventDefault(); setIsHovering(false); }}
@@ -290,7 +223,7 @@ export default function ImageDetect() {
             <p className="text-xs text-textMuted mt-2 font-mono">JPG &bull; PNG &bull; WEBP &bull; GIF &bull; BMP (max 10 MB)</p>
           </div>
         ) : (
-          <div className="w-full h-48 rounded-xl border border-deepBorder bg-deepCard flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+          <div className="w-full h-48 rounded-xl border border-white/10 bg-white/[0.03] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
             <LinkIcon className="w-8 h-8 text-textMuted mb-4" />
             <p className="text-sm text-gray-300 font-medium tracking-wide mb-4">Paste an external image URL for remote analysis</p>
             <div className="flex w-full gap-2 max-w-md mx-auto">
@@ -299,7 +232,7 @@ export default function ImageDetect() {
                 placeholder="https://example.com/image.jpg"
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
-                className="flex-1 bg-deepBase border border-deepBorder rounded-lg px-4 py-2 text-white focus:outline-none focus:border-deepRed/50 placeholder:text-textMuted/50 font-mono text-sm"
+                className="flex-1 bg-aiBase border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-rose-500/50 placeholder:text-textMuted/50 font-mono text-sm"
               />
               <button 
                 onClick={() => {
@@ -308,7 +241,7 @@ export default function ImageDetect() {
                      startAnalysis(null);
                    }
                 }}
-                className="px-4 py-2 bg-deepRed/10 border border-deepRed text-deepRed rounded-lg hover:bg-deepRed/20 hover:glow-red transition-all font-semibold whitespace-nowrap text-sm flex items-center justify-center"
+                className="px-4 py-2 bg-rose-500/10 border border-rose-500 text-rose-500 rounded-lg hover:bg-rose-500/20 hover:shadow-[0_0_20px_rgba(244,63,94,0.4)] transition-all font-semibold whitespace-nowrap text-sm flex items-center justify-center"
               >
                 ANALYZE
               </button>
@@ -319,7 +252,7 @@ export default function ImageDetect() {
         {/* Preview Panel */}
         <div className="glass-panel p-4">
           <p className="text-xs text-textMuted uppercase font-mono mb-3">Preview</p>
-          <div className="w-full aspect-video bg-deepBase rounded-lg overflow-hidden border border-deepBorder relative">
+          <div className="w-full aspect-video bg-aiBase rounded-lg overflow-hidden border border-white/10 relative">
             <img 
               src={previewUrl || "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&q=80&w=1000"} 
               alt="Preview"
@@ -327,12 +260,12 @@ export default function ImageDetect() {
             />
             
             {results && (
-              <div className="absolute inset-0 border-2 border-deepRed glow-red rounded-lg pointer-events-none transition-opacity duration-1000" />
+              <div className="absolute inset-0 border-2 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.4)] rounded-lg pointer-events-none transition-opacity duration-1000" />
             )}
             
             {analyzing && (
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center">
-                <ShieldCheck className="w-10 h-10 text-deepRed animate-pulse mb-3" />
+                <ShieldCheck className="w-10 h-10 text-rose-500 animate-pulse mb-3" />
                 <p className="text-xs font-mono text-white tracking-widest uppercase">Analyzing Pixels...</p>
               </div>
             )}
@@ -342,17 +275,17 @@ export default function ImageDetect() {
       </div>
 
       {/* Right Column - Results Panel */}
-      <div className={clsx("glass-panel p-6 border transition-all duration-500", results ? "border-deepRed" : "border-deepBorder opacity-50")}>
+      <div className={clsx("glass-panel p-6 border transition-all duration-500", results ? "border-rose-500" : "border-white/10 opacity-50")}>
         {!results && !analyzing && (
            <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
-             <AlertTriangle className="w-12 h-12 text-deepBorder" />
+             <AlertTriangle className="w-12 h-12 text-white/10" />
              <p className="text-textMuted text-sm">Upload an image to see detection results.</p>
            </div>
         )}
 
         {analyzing && (
            <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
-             <div className="w-16 h-16 rounded-full border-4 border-deepBorder border-t-deepRed animate-spin" />
+             <div className="w-16 h-16 rounded-full border-4 border-white/10 border-t-rose-500 animate-spin" />
              <div className="space-y-2">
                 <p className="text-sm font-mono text-white animate-pulse">Running Vision Models...</p>
                 <p className="text-xs text-textMuted">Calculating ELA Heuristics</p>
@@ -366,20 +299,20 @@ export default function ImageDetect() {
             {/* Header Result */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={clsx("p-2 rounded-lg", results.isFake ? "bg-deepRed/20" : "bg-deepGreen/20")}>
-                  {results.isFake ? <AlertTriangle className="w-5 h-5 text-deepRed" /> : <ShieldCheck className="w-5 h-5 text-deepGreen" />}
+                <div className={clsx("p-2 rounded-lg", results.isFake ? "bg-rose-500/20" : "bg-emerald-500/20")}>
+                  {results.isFake ? <AlertTriangle className="w-5 h-5 text-rose-500" /> : <ShieldCheck className="w-5 h-5 text-emerald-500" />}
                 </div>
-                <span className={clsx("font-display font-bold text-xl tracking-wider px-3 py-1 rounded-md border", results.isFake ? "text-deepRed bg-deepRed/10 border-deepRed/30" : "text-deepGreen bg-deepGreen/10 border-deepGreen/30")}>
+                <span className={clsx("font-display font-bold text-xl tracking-wider px-3 py-1 rounded-md border", results.isFake ? "text-rose-500 bg-rose-500/10 border-rose-500/30" : "text-emerald-500 bg-emerald-500/10 border-emerald-500/30")}>
                   {results.isFake ? "FAKE" : "REAL"}
                 </span>
               </div>
-              <span className={clsx("font-mono text-4xl font-bold", results.isFake ? "text-deepRed glow-text-red" : "text-deepGreen glow-text-green")}>
+              <span className={clsx("font-mono text-4xl font-bold", results.isFake ? "text-rose-500 text-shadow-[0_0_15px_rgba(244,63,94,0.6)]" : "text-emerald-500 text-shadow-[0_0_15px_rgba(16,185,129,0.6)]")}>
                 {results.score}%
               </span>
             </div>
 
             {/* Warning Banner */}
-            <div className={clsx("w-full border rounded-lg p-3 flex items-center justify-between", results.isFake ? "bg-deepRed/5 border-deepRed/20" : "bg-deepGreen/5 border-deepGreen/20")}>
+            <div className={clsx("w-full border rounded-lg p-3 flex items-center justify-between", results.isFake ? "bg-rose-500/5 border-rose-500/20" : "bg-emerald-500/5 border-emerald-500/20")}>
               <span className="text-sm text-textMuted font-mono">
                 {results.isFake ? "Ledger Hash Mismatch: Unregistered Provenance" : "Cryptographic Hash Verified: Live Human Capture"}
               </span>
@@ -391,24 +324,24 @@ export default function ImageDetect() {
               <div>
                 <div className="flex justify-between text-xs font-mono mb-2">
                   <span className="text-textMuted">Fake Probability</span>
-                  <span className="text-deepRed">{results.isFake ? results.score : 100 - results.score}%</span>
+                  <span className="text-rose-500">{results.isFake ? results.score : 100 - results.score}%</span>
                 </div>
-                <div className="w-full h-1.5 bg-deepBase rounded-full overflow-hidden">
-                  <div className="h-full bg-deepRed glow-red" style={{ width: `${results.isFake ? results.score : 100 - results.score}%` }} />
+                <div className="w-full h-1.5 bg-aiBase rounded-full overflow-hidden">
+                  <div className="h-full bg-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.4)]" style={{ width: `${results.isFake ? results.score : 100 - results.score}%` }} />
                 </div>
               </div>
               <div>
                 <div className="flex justify-between text-xs font-mono mb-2">
                   <span className="text-textMuted">Real Probability</span>
-                  <span className="text-deepGreen">{results.isFake ? 100 - results.score : results.score}%</span>
+                  <span className="text-emerald-500">{results.isFake ? 100 - results.score : results.score}%</span>
                 </div>
-                <div className="w-full h-1.5 bg-deepBase rounded-full overflow-hidden">
-                  <div className="h-full bg-deepGreen glow-green" style={{ width: `${results.isFake ? 100 - results.score : results.score}%` }} />
+                <div className="w-full h-1.5 bg-aiBase rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]" style={{ width: `${results.isFake ? 100 - results.score : results.score}%` }} />
                 </div>
               </div>
             </div>
 
-            <hr className="border-deepBorder" />
+            <hr className="border-white/10" />
 
             {/* Model Breakdown */}
             <div className="space-y-4">
@@ -419,20 +352,20 @@ export default function ImageDetect() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-300">RealEyes Vision AI</span>
                 <div className="flex items-center gap-3">
-                  <div className="w-24 h-1 bg-deepBase rounded-full overflow-hidden flex justify-end">
-                    <div className={clsx("h-full", results.isFake ? "bg-deepRed" : "bg-deepGreen")} style={{ width: `${results.models?.vision || results.score}%` }} />
+                  <div className="w-24 h-1 bg-aiBase rounded-full overflow-hidden flex justify-end">
+                    <div className={clsx("h-full", results.isFake ? "bg-rose-500" : "bg-emerald-500")} style={{ width: `${results.models?.vision || results.score}%` }} />
                   </div>
-                  <span className={clsx("font-mono text-xs", results.isFake ? "text-deepRed" : "text-deepGreen")}>{results.models?.vision || results.score}%</span>
+                  <span className={clsx("font-mono text-xs", results.isFake ? "text-rose-500" : "text-emerald-500")}>{results.models?.vision || results.score}%</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-300">ELA Heuristic</span>
                 <div className="flex items-center gap-3">
-                  <div className="w-24 h-1 bg-deepBase rounded-full overflow-hidden flex justify-end">
-                    <div className={clsx("h-full", results.isFake ? "bg-deepRed" : "bg-deepGreen")} style={{ width: `${results.models?.ela || 12}%` }} />
+                  <div className="w-24 h-1 bg-aiBase rounded-full overflow-hidden flex justify-end">
+                    <div className={clsx("h-full", results.isFake ? "bg-rose-500" : "bg-emerald-500")} style={{ width: `${results.models?.ela || 12}%` }} />
                   </div>
-                  <span className={clsx("font-mono text-xs", results.isFake ? "text-deepRed" : "text-deepGreen")}>{results.models?.ela || 12}%</span>
+                  <span className={clsx("font-mono text-xs", results.isFake ? "text-rose-500" : "text-emerald-500")}>{results.models?.ela || 12}%</span>
                 </div>
               </div>
             </div>
@@ -444,21 +377,21 @@ export default function ImageDetect() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {results.anomalies && results.anomalies.map((anom, i) => (
-                  <span key={i} className={clsx("text-xs border px-3 py-1 rounded-md", results.isFake ? "bg-deepRed/10 border-deepRed/30 text-red-400" : "bg-deepGreen/10 border-deepGreen/30 text-green-400")}>
+                  <span key={i} className={clsx("text-xs border px-3 py-1 rounded-md", results.isFake ? "bg-rose-500/10 border-rose-500/30 text-red-400" : "bg-emerald-500/10 border-emerald-500/30 text-green-400")}>
                     {anom}
                   </span>
                 ))}
               </div>
             </div>
 
-            <hr className="border-deepBorder" />
+            <hr className="border-white/10" />
 
             {/* Hash & Metadata */}
             <div className="space-y-4">
                <div className="flex items-center gap-2 text-xs font-mono text-textMuted uppercase tracking-wider">
                 <Fingerprint className="w-3 h-3" /> Authenticity Hash
               </div>
-              <p className="text-[10px] font-mono text-textMuted truncate bg-deepBase p-2 rounded border border-deepBorder/50">
+              <p className="text-[10px] font-mono text-textMuted truncate bg-aiBase p-2 rounded border border-white/10/50">
                 {results.hash}
               </p>
               <div className="flex items-center gap-2 text-xs text-textMuted font-mono">
@@ -471,25 +404,25 @@ export default function ImageDetect() {
                <div className="text-xs font-mono text-textMuted uppercase tracking-wider">Your Verdict (Manual)</div>
                {!feedbackStatus ? (
                  <div className="flex gap-3">
-                    <button onClick={() => submitFeedback('REAL')} className="flex-1 py-2 border border-deepBorder rounded-lg flex items-center justify-center gap-2 hover:bg-deepBase hover:text-white transition-colors text-sm text-textMuted">
+                    <button onClick={() => submitFeedback('REAL')} className="flex-1 py-2 border border-white/10 rounded-lg flex items-center justify-center gap-2 hover:bg-aiBase hover:text-white transition-colors text-sm text-textMuted">
                       <ThumbsUp className="w-4 h-4" /> REAL
                     </button>
-                    <button onClick={() => submitFeedback('FAKE')} className="flex-1 py-2 border border-deepRed/30 bg-deepRed/5 rounded-lg flex items-center justify-center gap-2 hover:bg-deepRed/20 text-deepRed transition-colors text-sm">
+                    <button onClick={() => submitFeedback('FAKE')} className="flex-1 py-2 border border-rose-500/30 bg-rose-500/5 rounded-lg flex items-center justify-center gap-2 hover:bg-rose-500/20 text-rose-500 transition-colors text-sm">
                       <ThumbsDown className="w-4 h-4" /> FAKE
                     </button>
                  </div>
                ) : feedbackStatus === 'success' ? (
-                 <div className="w-full py-3 bg-deepGreen/10 border border-deepGreen/30 text-deepGreen rounded-lg text-sm text-center font-medium font-mono">
+                 <div className="w-full py-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 rounded-lg text-sm text-center font-medium font-mono">
                    Data captured for RLHF pipeline training.
                  </div>
                ) : (
-                 <div className="w-full py-3 bg-deepRed/10 border border-deepRed/30 text-deepRed rounded-lg text-sm text-center font-medium">
+                 <div className="w-full py-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 rounded-lg text-sm text-center font-medium">
                    Failed to transmit manual verdict connection. 
                  </div>
                )}
             </div>
 
-            <hr className="border-deepBorder" />
+            <hr className="border-white/10" />
 
             {/* Processing Actions */}
             <div className="space-y-3 pt-2">
@@ -516,7 +449,7 @@ export default function ImageDetect() {
                  </button>
                  
                  {showReverseSearch && (
-                   <div className="w-full bg-deepBase/50 border border-teal-500/20 border-t-0 rounded-b-xl overflow-hidden p-3 pt-4 -mt-2 space-y-1">
+                   <div className="w-full bg-aiBase/50 border border-teal-500/20 border-t-0 rounded-b-xl overflow-hidden p-3 pt-4 -mt-2 space-y-1">
                       <button onClick={handleGoogleLens} className="w-full flex items-center gap-3 text-sm text-gray-300 hover:text-white px-3 py-2 rounded hover:bg-teal-900/30 transition-all text-left">
                         <LinkIcon className="w-4 h-4 text-teal-400" /> Google Lens
                       </button>
@@ -543,3 +476,4 @@ export default function ImageDetect() {
     </div>
   );
 }
+

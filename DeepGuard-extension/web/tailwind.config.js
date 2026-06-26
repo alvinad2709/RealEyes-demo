@@ -7,12 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        deepBase: '#0a0a0a',
-        deepCard: '#111111',
-        deepBorder: '#222222',
-        deepRed: '#ff2a2a',
-        deepGreen: '#00e559',
-        textMuted: '#888888',
+        aiBase: '#030712',
+        aiCard: '#0f172a',
+        aiBorder: '#1e293b',
+        aiAccent: '#8b5cf6', // violet-500
+        aiSecondary: '#0ea5e9', // sky-500
+        aiSuccess: '#10b981', // emerald-500
+        textMuted: '#94a3b8', // slate-400
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

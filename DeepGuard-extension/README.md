@@ -1,118 +1,173 @@
-# DeepGuard — AI Deepfake Detection Chrome Extension
+# DeepGuard
 
-An AI-powered Chrome extension for detecting deepfake images, video, and audio directly on any webpage.
+DeepGuard is an AI-powered deepfake image detection project. It combines a FastAPI AI backend, an Express API bridge, a React web interface, and a Chrome extension that can capture selected webpage regions for image analysis.
 
-## 🚀 Quick Start
+## Features
 
-### Step 1 — Start the Backend
+- Image deepfake detection using a Hugging Face/PyTorch model
+- Upload-based image analysis
+- Image URL analysis
+- Base64 image analysis for browser extension workflows
+- React web UI for image detection results
+- Chrome extension with region selection and visible-tab screenshot capture
+- Authenticity score, probability breakdown, hash generation, and analysis details
+- DOCX report generation from the web UI
+
+## Current Scope
+
+The implemented AI backend currently supports image detection only.
+
+There are UI/page files for broader concepts such as live detection, video detection, awareness, fake news, and AI chat, but the active FastAPI backend routes in this folder are image-focused:
+
+- `backend/routers/image.py`
+- `backend/models/image_model.py`
+
+## Project Structure
+
+```text
+DeepGuard-extension/
+├── api/                    # Express API bridge used by the web app
+│   ├── server.js
+│   ├── routes/
+│   └── controllers/
+├── backend/                # FastAPI AI image detection backend
+│   ├── main.py
+│   ├── models/
+│   │   └── image_model.py
+│   ├── routers/
+│   │   └── image.py
+│   └── requirements.txt
+├── extension/              # Chrome Manifest V3 extension
+│   ├── public/
+│   │   └── manifest.json
+│   └── src/
+│       ├── background/
+│       ├── content/
+│       ├── popup/
+│       └── shared/
+├── web/                    # React web frontend
+│   └── src/
+│       ├── components/
+│       └── pages/
+├── start_backend.bat
+├── start_mern.bat
+└── build_extension.bat
+```
+
+## Architecture
+
+```text
+React Web UI
+   -> Express API at http://localhost:5000/api/tools/detect-image
+      -> FastAPI AI Backend at http://127.0.0.1:8000/analyze/image
+
+Chrome Extension
+   -> Captures selected webpage region
+      -> Sends base64 image to FastAPI backend at /analyze/image-base64
+```
+
+## Tech Stack
+
+- Frontend: React, Vite, Tailwind CSS
+- Extension: Chrome Manifest V3, React, TypeScript, Vite
+- API bridge: Node.js, Express, Multer
+- AI backend: Python, FastAPI, Uvicorn
+- ML stack: PyTorch, TorchVision, Transformers, timm, Pillow
+
+## Backend Setup
+
+From `DeepGuard-extension/backend`:
+
 ```bash
-# Double-click start_backend.bat
-# OR manually:
-cd backend
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-> **First run**: Downloads AI models (~1GB). Subsequent runs are instant.
+The FastAPI server exposes:
 
-### Step 2 — Build the Extension
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `POST` | `/analyze/image` | Analyze an uploaded image file |
+| `POST` | `/analyze/image-url` | Analyze an image from a URL |
+| `POST` | `/analyze/image-base64` | Analyze a base64-encoded image |
+| `GET` | `/health` | Health check |
+| `GET` | `/docs` | Swagger API docs |
+
+## Express API Setup
+
+From `DeepGuard-extension/api`:
+
 ```bash
-# Double-click build_extension.bat
-# OR manually:
-cd extension
+npm install
+npm run dev
+```
+
+This starts the Express API on `http://localhost:5000`. The web app uses:
+
+```text
+POST /api/tools/detect-image
+```
+
+The Express API forwards image files or image URLs to the FastAPI backend and formats the result for the React UI.
+
+## Web App Setup
+
+From `DeepGuard-extension/web`:
+
+```bash
+npm install
+npm run dev
+```
+
+Open the local Vite URL shown in the terminal. The image detection page is available at:
+
+```text
+/detect-image
+```
+
+## Chrome Extension Setup
+
+From `DeepGuard-extension/extension`:
+
+```bash
 npm install
 npm run build
 ```
 
-### Step 3 — Load in Chrome
+Then load the extension in Chrome:
+
 1. Open `chrome://extensions/`
-2. Enable **Developer mode** (top right toggle)
-3. Click **Load unpacked**
-4. Select `extension\dist` folder
+2. Enable Developer mode
+3. Click Load unpacked
+4. Select `DeepGuard-extension/extension/dist`
 
----
+Make sure the FastAPI backend is running on port `8000` before using region analysis.
 
-## 📁 Project Structure
+## Useful Scripts
 
-```
-deepguard/
-├── backend/                 ← FastAPI AI Server
-│   ├── main.py              ← App entry point
-│   ├── models/
-│   │   ├── image_model.py   ← ViT deepfake image detector
-│   │   └── audio_model.py   ← Wav2Vec2 audio detector
-│   ├── routers/
-│   │   ├── image.py         ← POST /analyze/image, /image-url, /image-base64
-│   │   ├── video.py         ← POST /analyze/video, /video-frames
-│   │   └── audio.py         ← POST /analyze/audio
-│   └── requirements.txt
-│
-├── extension/               ← Chrome Extension (Vite + React + TypeScript)
-│   ├── public/
-│   │   ├── manifest.json    ← MV3 manifest
-│   │   └── offscreen.html   ← Offscreen doc for audio recording
-│   └── src/
-│       ├── popup/           ← Extension popup UI
-│       ├── content/         ← Content scripts (injected into pages)
-│       │   ├── imageScanner.ts
-│       │   ├── regionSelector.ts
-│       │   ├── audioRecorder.ts
-│       │   └── floatingPanel.ts
-│       ├── background/
-│       │   └── serviceWorker.ts
-│       └── offscreen/
-│           └── offscreen.ts
-│
-├── start_backend.bat        ← One-click backend startup
-└── build_extension.bat      ← One-click extension build
+```text
+start_backend.bat     Starts the Python/FastAPI backend
+build_extension.bat   Builds the Chrome extension
+start_mern.bat        Starts the web/API stack if configured locally
 ```
 
----
+## GitHub Description
 
+DeepGuard is an AI-powered deepfake image detection project with a FastAPI backend, Express API bridge, React web interface, and Chrome extension support for webpage region capture and image analysis.
 
-## ✨ Features
+## Suggested Topics
 
-### 1. Image Scanner (Like Grammarly)
-- Toggle ON in popup → shield icon appears on **every image** on the page
-- Click any shield icon → floating analysis panel appears
-- Panel shows: authenticity score ring, fake/real probability bars, detailed analysis
-- Panel is **draggable** — move it anywhere
-
-### 2. Real-time Region Detection
-- Click "Select" → cursor becomes crosshair
-- Drag to select any region (image, video, ad, etc.)
-- Floating panel appears with live analysis, updating every 2 seconds
-- Works on videos too (analyzes frames)
-
-### 3. Audio Analysis
-- Click "Record" → 5-second countdown shown in panel
-- Records 10 seconds of the tab's audio
-- Sends to AI model → shows AI voice detection score
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Vite + React 18 + TypeScript + CSS
-- **Backend**: FastAPI + Uvicorn + Python 3.11
-- **AI**: HuggingFace Transformers + PyTorch (CUDA GPU)
-- **Extension**: Chrome Manifest V3
-
----
-
-## 📡 API Reference
-
-Base URL: `http://localhost:8000`
-
-| Endpoint | Method | Description |
-|---|---|---|
-| `/analyze/image` | POST | Upload image file |
-| `/analyze/image-url` | POST | Analyze image from URL |
-| `/analyze/image-base64` | POST | Analyze base64 image |
-| `/analyze/video` | POST | Analyze single frame |
-| `/analyze/video-frames` | POST | Analyze multiple frames |
-| `/analyze/audio` | POST | Upload audio file |
-| `/docs` | GET | Swagger UI |
+```text
+deepfake-detection
+image-detection
+ai
+fastapi
+react
+chrome-extension
+pytorch
+huggingface
+computer-vision
+media-forensics
+```
