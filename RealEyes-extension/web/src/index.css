@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-white font-sans antialiased;
+    background-color: #030712;
+  }
+}
+
+@layer utilities {
+  .glow-accent {
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+  }
+  .glow-success {
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+  }
+  .glow-text-accent {
+    text-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+  }
+  .glow-text-success {
+    text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+  }
+  .glass-panel {
+    @apply bg-aiCard/60 backdrop-blur-xl border border-white/10 rounded-2xl;
+  }
+}
